@@ -22,7 +22,7 @@ public class MainFrame {
     private JScrollPane tableScrollPane = new JScrollPane(table);
     private JTextField amountOfVectorsTextField = new JTextField();
 
-    int vectorsCounter = 0;
+    private int vectorsCounter = 0;
 
     public Vector<Vector<Integer>> getVectorSortedVectors() {
         return vectorSortedVectors;
@@ -40,35 +40,19 @@ public class MainFrame {
 
         for (vectorsCounter = 0; vectorsCounter < vectorsNumber; vectorsCounter++) {
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    MergeSort mergeSort = new MergeSort();
-                    vectorSortedVectors.add(new Vector<>());
-                    vectorSortedVectors.get(vectorsCounter).add(mergeSort.getResultMassive().length);
-                    vectorSortedVectors.get(vectorsCounter).add((int) mergeSort.getSortTime());
-                }
-            });
-
-            thread.start();
-
-            if(vectorSortedVectors.size()>vectorsCounter) {
-                if (vectorSortedVectors.get(vectorsCounter).get(1) / 500 + 20 > drawScrollPane.getViewport().getHeight() ||
-                        vectorSortedVectors.get(vectorsCounter).get(0) * 5 + 60 > drawScrollPane.getViewport().getWidth()) {
-                    drawScrollPane.setSize(new Dimension(vectorSortedVectors.get(vectorsCounter).get(1) / 500 + 80,
-                            vectorSortedVectors.get(vectorsCounter).get(0) * 5 + 80));
-                }
-            }
+            MergeSort mergeSort = new MergeSort();
+            vectorSortedVectors.add(new Vector<>());
+            vectorSortedVectors.get(vectorsCounter).add(mergeSort.getResultMassive().length);
+            vectorSortedVectors.get(vectorsCounter).add((int) mergeSort.getSortTime());
 
             drawingComponent.addData(vectorSortedVectors);
             myTableModel.setData(vectorSortedVectors);
             myTableModel.fireTableStructureChanged();
             mainFrame.repaint();
 
-            try {
-                Thread.sleep(50);
-            }catch (InterruptedException e){}
         }
+
+        drawingComponent.scale(200);
     }
 
     private JFrame buildMainFrame() {
@@ -80,11 +64,9 @@ public class MainFrame {
         JPanel panelForTableAndGraphics = new JPanel();
         panelForTableAndGraphics.setLayout(new GridLayout());
         panelForTableAndGraphics.add(tableScrollPane);
-        drawScrollPane.getViewport().setPreferredSize(new Dimension(500, 200));
-        drawScrollPane.getViewport().setBackground(Color.WHITE);
-        drawScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        drawScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         panelForTableAndGraphics.add(drawScrollPane);
+
+        drawScrollPane.getViewport().setBackground(Color.WHITE);
 
         mainFrame.add(panelForTableAndGraphics);
 
@@ -93,7 +75,7 @@ public class MainFrame {
         amountOfVectorsTextField.setPreferredSize(new Dimension(100, 30));
         paintGraphicsButton.setPreferredSize(new Dimension(70, 28));
         zoomLabel.setPreferredSize(new Dimension(70, 30));
-        drawInstrumentsPanel.setPreferredSize(new Dimension(300, 50));
+        drawInstrumentsPanel.setPreferredSize(new Dimension(300, 35));
         drawInstrumentsPanel.add(amountOfVectorsTextField);
         drawInstrumentsPanel.add(paintGraphicsButton);
         drawInstrumentsPanel.add(zoomLabel);
@@ -116,6 +98,6 @@ public class MainFrame {
     public static void main(String[] args) {
         MainFrame mainFrame = new MainFrame();
         mainFrame.buildMainFrame();
-        mainFrame.generateTableInfo(10);
+        mainFrame.generateTableInfo(5);
     }
 }

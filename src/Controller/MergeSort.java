@@ -47,8 +47,8 @@ public class MergeSort {
 
         Random random = new Random();
 
-        elementsAmountFirstMassive = random.nextInt(50);
-        elemetsAmountSecondMassive = random.nextInt(70);
+        elementsAmountFirstMassive = random.nextInt(30);
+        elemetsAmountSecondMassive = random.nextInt(40);
 
         firstMassive = new int[elementsAmountFirstMassive];
         secondMassive = new int[elemetsAmountSecondMassive];
