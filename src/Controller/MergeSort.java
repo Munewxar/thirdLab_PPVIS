@@ -2,26 +2,39 @@ package Controller;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Vector;
 
-public class MergeSort {
+public class MergeSort implements Runnable{
 
     private int[] firstMassive;
     private int[] secondMassive;
     private int[] resultMassive;
-    private long sortTime;
+    private long sortTime = 0;
+    private Vector<Long> sortTimeVector = new Vector<>();
+    private int massiveSize = 1;
 
-    public MergeSort(){
-
+    public void run(){
         long startTime;
         long finishTime;
 
-        generateMassives();
-        startTime = System.nanoTime();
-        sortMassive(getFirstMassive(), 0, getFirstMassive().length - 1);
-        sortMassive(getSecondMassive(), 0, getSecondMassive().length - 1);
-        mergeMassives();
-        finishTime = System.nanoTime();
-        sortTime = finishTime - startTime;
+        for(int sameElementsAmountMassiveCounter = 0; sameElementsAmountMassiveCounter<4; sameElementsAmountMassiveCounter++) {
+            generateMassives();
+            startTime = System.nanoTime();
+            sortMassive(getFirstMassive(), 0, getFirstMassive().length - 1);
+            sortMassive(getSecondMassive(), 0, getSecondMassive().length - 1);
+            mergeMassives();
+            finishTime = System.nanoTime();
+            sortTimeVector.add(finishTime - startTime);
+        }
+
+        for(int timeCounter = 0; timeCounter<sortTimeVector.size(); timeCounter++){
+            sortTime += sortTimeVector.get(timeCounter);
+        }
+
+        sortTime = sortTime/sortTimeVector.size();
+
+        sortTimeVector.clear();
+        massiveSize++;
     }
 
     public long getSortTime(){
@@ -42,25 +55,30 @@ public class MergeSort {
 
     private void generateMassives(){
 
-        int elementsAmountFirstMassive;
-        int elemetsAmountSecondMassive;
-
         Random random = new Random();
 
-        elementsAmountFirstMassive = random.nextInt(30);
-        elemetsAmountSecondMassive = random.nextInt(40);
+        firstMassive = new int[massiveSize];
+        secondMassive = new int[massiveSize];
+        int bufferSize = massiveSize;
+        resultMassive = new int[bufferSize*2];
 
-        firstMassive = new int[elementsAmountFirstMassive];
-        secondMassive = new int[elemetsAmountSecondMassive];
-        resultMassive = new int[elementsAmountFirstMassive + elemetsAmountSecondMassive];
-
-        for(int elementsCounter = 0; elementsCounter<elementsAmountFirstMassive; elementsCounter++){
+        for(int elementsCounter = 0; elementsCounter<massiveSize; elementsCounter++){
             firstMassive[elementsCounter] = random.nextInt(1000);
         }
 
-        for(int elementsCounter = 0; elementsCounter<elemetsAmountSecondMassive; elementsCounter++){
+        for(int elementsCounter = 0; elementsCounter<massiveSize; elementsCounter++){
             secondMassive[elementsCounter] = random.nextInt(5000);
         }
+
+
+    }
+
+    public void renewMassiveSize(){
+        massiveSize = 1;
+    }
+
+    public void renewSortTime(){
+        sortTime = 0;
     }
 
     private void sortMassive(int[] currentMassive, int lowestIndex, int highestIndex){
