@@ -6,79 +6,38 @@ import java.util.Vector;
 
 public class MergeSort implements Runnable{
 
-    private int[] firstMassive;
-    private int[] secondMassive;
-    private int[] resultMassive;
-    private long sortTime = 0;
-    private Vector<Long> sortTimeVector = new Vector<>();
     private int massiveSize = 1;
+    private MassiveGenerator massiveGenerator = new MassiveGenerator();
+    private SortingTime sortingTime = new SortingTime();
+
+    SortingTime getSortingTime() {
+        return sortingTime;
+    }
+
+    MassiveGenerator getMassiveGenerator(){
+        return massiveGenerator;
+    }
 
     public void run(){
-        long startTime;
-        long finishTime;
 
-        for(int sameElementsAmountMassiveCounter = 0; sameElementsAmountMassiveCounter<4; sameElementsAmountMassiveCounter++) {
-            generateMassives();
-            startTime = System.nanoTime();
-            sortMassive(getFirstMassive(), 0, getFirstMassive().length - 1);
-            sortMassive(getSecondMassive(), 0, getSecondMassive().length - 1);
+        for(int sameElementsAmountMassiveCounter = 0; sameElementsAmountMassiveCounter<200; sameElementsAmountMassiveCounter++) {
+            massiveGenerator.generateMassives(massiveSize);
+            sortingTime.setStartTime();
+            sortMassive(massiveGenerator.getFirstMassive(), 0, massiveGenerator.getFirstMassive().length - 1);
+            sortMassive(massiveGenerator.getSecondMassive(), 0, massiveGenerator.getSecondMassive().length - 1);
             mergeMassives();
-            finishTime = System.nanoTime();
-            sortTimeVector.add(finishTime - startTime);
+            sortingTime.setFinishTime();
+            sortingTime.addTimeToVector(sortingTime.setSortingTime());
         }
 
-        for(int timeCounter = 0; timeCounter<sortTimeVector.size(); timeCounter++){
-            sortTime += sortTimeVector.get(timeCounter);
-        }
+        sortingTime.setRealSortTime();
+        sortingTime.clearSortTimeVector();
 
-        sortTime = sortTime/sortTimeVector.size();
-
-        sortTimeVector.clear();
         massiveSize++;
     }
 
-    public long getSortTime(){
-        return sortTime;
-    }
-
-    private int[] getFirstMassive(){
-        return firstMassive;
-    }
-
-    private int[] getSecondMassive(){
-        return secondMassive;
-    }
-
-    public int[] getResultMassive(){
-        return resultMassive;
-    }
-
-    private void generateMassives(){
-
-        Random random = new Random();
-
-        firstMassive = new int[massiveSize];
-        secondMassive = new int[massiveSize];
-        int bufferSize = massiveSize;
-        resultMassive = new int[bufferSize*2];
-
-        for(int elementsCounter = 0; elementsCounter<massiveSize; elementsCounter++){
-            firstMassive[elementsCounter] = random.nextInt(1000);
-        }
-
-        for(int elementsCounter = 0; elementsCounter<massiveSize; elementsCounter++){
-            secondMassive[elementsCounter] = random.nextInt(5000);
-        }
-
-
-    }
-
-    public void renewMassiveSize(){
+    void renewMassiveSize(){
         massiveSize = 1;
-    }
-
-    public void renewSortTime(){
-        sortTime = 0;
     }
 
     private void sortMassive(int[] currentMassive, int lowestIndex, int highestIndex){
@@ -117,26 +76,26 @@ public class MergeSort implements Runnable{
     private void mergeMassives(){
 
         int firstCounter=0, secondCounter=0;
-        for (int resultCounter=0; resultCounter<resultMassive.length; resultCounter++) {
+        for (int resultCounter=0; resultCounter<massiveGenerator.getResultMassive().length; resultCounter++) {
 
-            if (firstCounter > firstMassive.length-1) {
-                int a = secondMassive[secondCounter];
-                resultMassive[resultCounter] = a;
+            if (firstCounter > massiveGenerator.getFirstMassive().length-1) {
+                int a = massiveGenerator.getSecondMassive()[secondCounter];
+                massiveGenerator.getResultMassive()[resultCounter] = a;
                 secondCounter++;
             }
-            else if (secondCounter > secondMassive.length-1) {
-                int a = firstMassive[firstCounter];
-                resultMassive[resultCounter] = a;
+            else if (secondCounter > massiveGenerator.getSecondMassive().length-1) {
+                int a = massiveGenerator.getFirstMassive()[firstCounter];
+                massiveGenerator.getResultMassive()[resultCounter] = a;
                 firstCounter++;
             }
-            else if (firstMassive[firstCounter] < secondMassive[secondCounter]) {
-                int a = firstMassive[firstCounter];
-                resultMassive[resultCounter] = a;
+            else if (massiveGenerator.getFirstMassive()[firstCounter] < massiveGenerator.getSecondMassive()[secondCounter]) {
+                int a = massiveGenerator.getFirstMassive()[firstCounter];
+                massiveGenerator.getResultMassive()[resultCounter] = a;
                 firstCounter++;
             }
             else {
-                int b = secondMassive[secondCounter];
-                resultMassive[resultCounter] = b;
+                int b = massiveGenerator.getSecondMassive()[secondCounter];
+                massiveGenerator.getResultMassive()[resultCounter] = b;
                 secondCounter++;
             }
         }

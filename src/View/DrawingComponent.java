@@ -1,7 +1,7 @@
 package View;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
 import java.util.Vector;
 
@@ -20,7 +20,7 @@ public class DrawingComponent extends JComponent implements MouseListener, Mouse
     private int stepSize = 40;
     private int windowWidth = 0, windowHeight = 0;
     private int maxOx = 0, maxOy = 0;
-    private int indentSize = 40;
+    private final int indentSize = 40;
 
     private int xIncrease = 20;
     private int yDecrease = 50;
@@ -28,21 +28,21 @@ public class DrawingComponent extends JComponent implements MouseListener, Mouse
     private Vector<Vector<Integer>> dataVector = new Vector<>();
     private Graphics2D graphics;
 
-    private MainFrame mainFrame;
+    private final MainFrameClass mainFrameClass;
 
-    DrawingComponent(MainFrame mainFrame){
-        this.mainFrame = mainFrame;
+    DrawingComponent(MainFrameClass mainFrameClass){
+        this.mainFrameClass = mainFrameClass;
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         setAutoscrolls(true);
     }
 
-    void fillDataVector(Vector<Vector<Integer>> dataVector){
+    public void fillDataVector(Vector<Vector<Integer>> dataVector){
         this.dataVector = dataVector;
     }
 
-    void clearData(){
+    public void clearData(){
         dataVector.clear();
         maxOx = 0;
         maxOy = 0;
@@ -137,6 +137,7 @@ public class DrawingComponent extends JComponent implements MouseListener, Mouse
 
     public void mouseWheelMoved(MouseWheelEvent e) {
 
+        if((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
             double zoomFactor = -SCALE_STEP * e.getPreciseWheelRotation();
             zoom = Math.abs(zoom + zoomFactor);
 
@@ -145,10 +146,11 @@ public class DrawingComponent extends JComponent implements MouseListener, Mouse
                 Dimension d = new Dimension(windowWidth, windowHeight);
                 setPreferredSize(d);
                 setSize(d);
-                mainFrame.setZoomLabel(zoom);
+                mainFrameClass.setZoomLabel(zoom);
                 validate();
                 revalidate();
             }
+        }
     }
 
     public void mouseDragged(MouseEvent e) {

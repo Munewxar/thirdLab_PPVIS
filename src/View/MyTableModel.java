@@ -1,4 +1,4 @@
-package Model;
+package View;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.Vector;
